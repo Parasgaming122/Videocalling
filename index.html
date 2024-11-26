@@ -1,0 +1,187 @@
+<html>
+<head>
+  <script src='https://cdn.scaledrone.com/scaledrone.min.js'></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <style>
+    body {
+      background: #202124;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .main-container {
+      display: flex;
+      flex: 1;
+      position: relative;
+    }
+
+    .video-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 16px;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: calc(50% - 8px);
+      aspect-ratio: 16/9;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      background: #3c4043;
+      object-fit: cover;
+    }
+
+    .fullscreen-btn {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(32, 33, 36, 0.6);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+      opacity: 0;
+    }
+
+    .video-wrapper:hover .fullscreen-btn {
+      opacity: 1;
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(32, 33, 36, 0.8);
+    }
+
+    video {
+      background: #3c4043;
+      border-radius: 16px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .controls {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      background: rgba(32, 33, 36, 0.9);
+      padding: 8px;
+      border-radius: 28px;
+    }
+
+    .control-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: #3c4043;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+    }
+
+    .control-button:hover {
+      background: #4a4d51;
+    }
+
+    .control-button.active {
+      background: #ea4335;
+    }
+
+    .copy {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      color: white;
+      background: rgba(60, 64, 67, 0.9);
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    .control-button svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .end-call {
+      background: #ea4335 !important;
+    }
+
+    .end-call:hover {
+      background: #dc3626 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="copy">Share URL to start a video call</div>
+  <div class="main-container">
+    <div class="video-container">
+      <div class="video-wrapper">
+        <video id="localVideo" autoplay muted></video>
+        <button class="fullscreen-btn" data-video="localVideo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="video-wrapper">
+        <video id="remoteVideo" autoplay></video>
+        <button class="fullscreen-btn" data-video="remoteVideo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="controls">
+    <button class="control-button" id="toggleVideo" title="Turn off camera">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 8v8H5V8h10m1-2H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4V7c0-.55-.45-1-1-1z" fill="currentColor"/>
+      </svg>
+    </button>
+    <button class="control-button" id="toggleAudio" title="Turn off microphone">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" fill="currentColor"/>
+        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" fill="currentColor"/>
+      </svg>
+    </button>
+    <button class="control-button" id="toggleScreen" title="Present now">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" fill="currentColor"/>
+      </svg>
+    </button>
+    <button class="control-button end-call" id="endCall" title="Leave call">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.73-1.68-1.36-2.66-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
